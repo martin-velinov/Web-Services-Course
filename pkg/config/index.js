@@ -18,7 +18,7 @@ const getConfigPropertyValue = (key) => {
     // }
     // throw(new Error('Requested property is not present in config object.'))
 
-    if (!config.hasOwnProperty(key)) { // => true/false check
+    if (config[key] === undefined) { // => true/false check
         throw(new Error('Requested property is not present in config object.'));
         // return null;
     }
@@ -26,5 +26,5 @@ const getConfigPropertyValue = (key) => {
 };
 
 module.exports = {
-    getConfig: getConfigPropertyValue
+     getConfigPropertyValue
 }
