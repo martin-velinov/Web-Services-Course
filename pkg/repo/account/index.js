@@ -1,4 +1,4 @@
-const AccountModel = require('../../model/account')
+const AccountModel = require('../../models/account')
 
 const deleteAccount = async (idToFilterBy) => { 
     return await AccountModel.deleteOne({_id: idToFilterBy});
