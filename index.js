@@ -34,8 +34,10 @@ const awaitResult = () => {
 };
 
 
+// Create endpoints
+
 // login
-app.post("/api/v1/auth/login", (req, res) => auth.login(req, res));
+app.post("/api/v1/auth/login", auth.login);
 // logout
 app.post("/api/v1/auth/logout", function logoutHandler(request, response) {
 	return auth.logout(request, response);
@@ -48,6 +50,8 @@ app.post("/api/v1/auth/forgot-password", auth.forgotPassword);
 app.post("/api/v1/auth/reset-password", auth.resetPassword);
 // refresh token
 app.get("/api/v1/auth/refresh-password", auth.refreshToken);
+
+
 
 app.listen(port, (err) => {
 	if (err) {
