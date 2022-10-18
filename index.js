@@ -10,28 +10,51 @@ const SECONDS_TIMEOUT = NUMBER_SECONDS * 1000; // number in milliseconds
 connectDB();
 
 const port = config.getConfigPropertyValue("port");
-
+const { jwt_secret_key: JWT_SECRET } =
+	config.getConfigPropertyValue("security");
 const express = require("express");
+const { expressjwt: checkJWTFunction } = require("express-jwt");
 const app = express();
 
 app.use(morgan("tiny"));
 app.use(express.json());
+
+// CUSTOM MIDDLEWARE METHOD
+app.use((request, response, next) => {
+	console.log(`but i'm first: ${request.method} - ${response.statusCode}`);
+	// request.body = JSON.parse(request.body)
+	next();
+});
+
+// check every request if it has a token
+app.use(
+	checkJWTFunction({ secret: JWT_SECRET, algorithms: ["HS256"] })
+		// don't check if it's using these routes below
+		.unless({
+			path: [
+				"/api/v1/auth/login",
+				"/api/v1/auth/logout",
+				"/api/v1/auth/create-user",
+				"/api/v1/auth/forgot-password",
+				"/api/v1/auth/reset-password",
+				"/api/v1/auth/refresh-token"
+			],
+		})
+);
 
 app.get("/", async (req, res) => {
 	const result = await awaitResult();
 	res.send(` ${result} kako si? Poveli 🍦`);
 });
 
-const awaitResult = () => {
-	return new Promise((resolve, reject) => {
-		setTimeout(() => {
-			if (false) {
-				reject(new Error("hey hey"));
-			}
-			resolve("hey");
-		}, SECONDS_TIMEOUT);
-	});
-};
+app.get("/api/v1/getData", async (req, res) => {
+	res.send([
+		{ people: `🙋‍♂️🙋‍♀️` },
+		{ dogs: "🐕🐕‍🦺🐩" },
+		{ fruits: "🍇🍈🍉🍊🍌🥝🍒🍑🍍" },
+	]);
+});
+
 
 
 // Create endpoints
@@ -49,7 +72,7 @@ app.post("/api/v1/auth/forgot-password", auth.forgotPassword);
 // reset password
 app.post("/api/v1/auth/reset-password", auth.resetPassword);
 // refresh token
-app.get("/api/v1/auth/refresh-password", auth.refreshToken);
+app.get("/api/v1/auth/refresh-token", auth.refreshToken);
 
 
 
