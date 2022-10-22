@@ -1,22 +1,19 @@
-const config = require("./pkg/config");
-const connectDB = require("./pkg/database");
+const config = require("../../pkg/config");
+const connectDB = require("../../pkg/database");
 const morgan = require("morgan");
-const auth = require("./handlers/auth");
-
-const NUMBER_SECONDS = 3; // 3 seconds 
-const SECONDS_TIMEOUT = NUMBER_SECONDS * 1000; // number in milliseconds
-
+const auth = require("./handlers");
 
 connectDB();
 
-const port = config.getConfigPropertyValue("port");
-const { jwt_secret_key: JWT_SECRET } =
-	config.getConfigPropertyValue("security");
+const { authentication: { port } } = config.getConfigPropertyValue("services");
+const { jwt_secret_key: JWT_SECRET } = config.getConfigPropertyValue("security");
+
 const express = require("express");
 const { expressjwt: checkJWTFunction } = require("express-jwt");
 const app = express();
 
 app.use(morgan("tiny"));
+// parsing the body to be in json format
 app.use(express.json());
 
 // CUSTOM MIDDLEWARE METHOD
@@ -37,34 +34,15 @@ app.use(
 				"/api/v1/auth/create-user",
 				"/api/v1/auth/forgot-password",
 				"/api/v1/auth/reset-password",
-				"/api/v1/auth/refresh-token"
+				"/api/v1/auth/refresh-token",
 			],
 		})
 );
 
-app.get("/", async (req, res) => {
-	const result = await awaitResult();
-	res.send(` ${result} kako si? Poveli 🍦`);
-});
-
-app.get("/api/v1/getData", async (req, res) => {
-	res.send([
-		{ people: `🙋‍♂️🙋‍♀️` },
-		{ dogs: "🐕🐕‍🦺🐩" },
-		{ fruits: "🍇🍈🍉🍊🍌🥝🍒🍑🍍" },
-	]);
-});
-
-
-
-// Create endpoints
-
 // login
 app.post("/api/v1/auth/login", auth.login);
 // logout
-app.post("/api/v1/auth/logout", function logoutHandler(request, response) {
-	return auth.logout(request, response);
-});
+app.post("/api/v1/auth/logout", auth.logout);
 // create user credentials / register
 app.post("/api/v1/auth/create-user", auth.register);
 // forgot password
@@ -75,11 +53,12 @@ app.post("/api/v1/auth/reset-password", auth.resetPassword);
 app.get("/api/v1/auth/refresh-token", auth.refreshToken);
 
 
-
 app.listen(port, (err) => {
 	if (err) {
-		throw new Error(`Cannot start server running on http://localhost:${port}`, err);
+		throw new Error(
+			`Cannot start server running on http://localhost:${port}`,
+			err
+		);
 	}
-
-    console.log(`Server running on http://localhost:${port}`)
+	console.log(`Auth server running on http://localhost:${port}`);
 });

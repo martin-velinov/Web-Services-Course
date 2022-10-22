@@ -6,6 +6,8 @@ const Account = mongoose.model("accounts",
 		email: { type: String, required: true, unique: true },
 		full_name: String,
 		password: { type: String, required: true },
+		firstTimeLogin: { type: Boolean, default: false },
+		isTwoFactorAuth: Boolean
 }, "accounts");
 
 
