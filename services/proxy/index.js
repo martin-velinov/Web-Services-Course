@@ -1,8 +1,10 @@
+const path = require('path');
 const config = require("../../pkg/config");
 const morgan = require("morgan");
 const express = require("express");
 const expressProxy = require("express-http-proxy");
 const app = express();
+
 
 const {
 	proxy: { port },
@@ -37,6 +39,8 @@ app.use(
 			`http://localhost:${authorsPort}/api/v1/author${request.url}`,
 	})
 );
+
+app.use("/", express.static(path.join(__dirname, "../../web/build")));
 
 app.listen(port, (err) => {
 	if (err) {

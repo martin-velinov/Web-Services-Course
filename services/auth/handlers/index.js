@@ -5,7 +5,7 @@ const config = require('../../../pkg/config')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
-const {validate, validateCreateNewAccountRule, validateLoginRule} = require('../../../pkg/validators/validator');
+const {validate, validateCreateNewAccountRule, validateLoginRule} = require('../../../pkg/validator/validator');
 const { jwt_secret_key: JWT_SECRET, expiryTime } = config.getConfigPropertyValue("security");
 
 

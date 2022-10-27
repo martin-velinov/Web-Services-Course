@@ -1,4 +1,4 @@
-const AuthorModel = require('../../model/author')
+const AuthorModel = require('../../models/author')
 
 const deleteAuthor = async (idToFilterBy) => { 
     return await AuthorModel.deleteOne({_id: idToFilterBy});
